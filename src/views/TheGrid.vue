@@ -77,6 +77,10 @@ const layout = reactive([
 <template>
   <main>
     <h1>The Grid</h1>
+    <p>
+      Help me make this less shitty =>
+      <a :href="'https://github.com/nastita/vue-cool-grid-stuff'">vue-cool-grid-stuff</a>
+    </p>
     <div class="layout-json">
       Displayed as <code>[x, y, w, h]</code>:
       <div class="columns">
