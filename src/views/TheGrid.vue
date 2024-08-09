@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { GridLayout } from 'grid-layout-plus'
-import InstagramEmbed from '@/components/InstagramPost.vue'
-import XPost from '@/components/XPost.vue'
 
 const draggable = ref(true)
 const resizable = ref(false)
@@ -53,9 +51,12 @@ const layout = reactive([
     i: '2',
     static: false,
     data: {
-      type: 'instagram_post',
+      type: 'iframe',
       width: '100%',
-      height: '100%'
+      height: '100%',
+      src: 'https://www.instagram.com/reel/C4DnYdFLS9x/embed',
+      title: 'Instagram post',
+      frameborder: '0'
     }
   },
   {
@@ -66,9 +67,12 @@ const layout = reactive([
     i: '3',
     static: false,
     data: {
-      type: 'x_post',
+      type: 'iframe',
       width: '100%',
-      height: '100%'
+      height: '100%',
+      src: 'https://twitframe.com/show?url=https://twitter.com/ChiliPeppers/status/1821250605752656005',
+      title: 'Twitter post',
+      frameborder: '0'
     }
   }
 ])
@@ -114,8 +118,6 @@ const layout = reactive([
             :allow="item.data.allow"
             :referrerpolicy="item.data.referrerpolicy"
           ></iframe>
-          <InstagramEmbed v-if="item.data.type === 'instagram_post'" />
-          <XPost v-if="item.data.type === 'x_post'" />
         </template>
       </GridLayout>
     </div>
