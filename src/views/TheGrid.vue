@@ -78,28 +78,58 @@ const layout = reactive([
 ])
 </script>
 
+<style scoped>
+/* .vgl-layout {
+  background-color: #eee;
+} */
+
+:deep(.vgl-item:not(.vgl-item--placeholder)) {
+  background-color: #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+:deep(.vgl-item--resizing) {
+  opacity: 90%;
+}
+
+:deep(.vgl-item--static) {
+  background-color: #cce;
+}
+</style>
+
 <template>
   <main>
-    <h1>The Grid</h1>
-    <p>
-      Help me make this less shitty =>
-      <a :href="'https://github.com/nastita/vue-cool-grid-stuff'">vue-cool-grid-stuff</a>
-    </p>
-    <div class="layout-json">
-      Displayed as <code>[x, y, w, h]</code>:
-      <div class="columns">
-        <div v-for="item in layout" :key="item.i">
-          <strong>{{ item.i }}</strong
-          >: [{{ item.x }}, {{ item.y }}, {{ item.w }}, {{ item.h }}]
+    <lukso-card variant="with-header" border-radius="small" shadow="medium">
+      <div slot="header" class="p-2 text-center">
+        <h1 className="text-xl font-bold underline">The Grid</h1>
+      </div>
+      <div slot="content" class="p-2">
+        <p>
+          Help me make this less shitty @
+          <a
+            class="underline text-blue-500"
+            :href="'https://github.com/nastita/vue-cool-grid-stuff'"
+            >vue-cool-grid-stuff</a
+          >
+        </p>
+        <div class="p-2 border-black border-solid">
+          Displayed as <code>[x, y, w, h]</code>:
+          <div class="columns-8">
+            <div v-for="item in layout" :key="item.i">
+              <strong>{{ item.i }}</strong
+              >: [{{ item.x }}, {{ item.y }}, {{ item.w }}, {{ item.h }}]
+            </div>
+          </div>
+        </div>
+        <div class="mt-2">
+          <input v-model="draggable" type="checkbox" /> Draggable
+          <input v-model="resizable" type="checkbox" /> Resizable
+          <input v-model="responsive" type="checkbox" /> Responsive
         </div>
       </div>
-    </div>
-    <hr />
-    <input v-model="draggable" type="checkbox" /> Draggable
-    <input v-model="resizable" type="checkbox" /> Resizable
-    <input v-model="responsive" type="checkbox" /> Responsive
-    <br />
-    <div style="margin-top: 10px">
+    </lukso-card>
+
+    <div class="mt-2">
       <GridLayout
         v-model:layout="layout"
         :row-height="10"
@@ -123,43 +153,3 @@ const layout = reactive([
     </div>
   </main>
 </template>
-
-<style scoped>
-.vgl-layout {
-  background-color: #eee;
-}
-
-:deep(.vgl-item:not(.vgl-item--placeholder)) {
-  background-color: #ccc;
-  border: 1px solid black;
-}
-
-:deep(.vgl-item--resizing) {
-  opacity: 90%;
-}
-
-:deep(.vgl-item--static) {
-  background-color: #cce;
-}
-
-.text {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  margin: auto;
-  font-size: 24px;
-  text-align: center;
-}
-
-.layout-json {
-  padding: 10px;
-  margin-top: 10px;
-  background-color: #ddd;
-  border: 1px solid black;
-}
-
-.columns {
-  columns: 120px;
-}
-</style>
