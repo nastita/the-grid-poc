@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import '@lukso/web-components/tools/sass/main.scss';
+
+// main.scss
+$font-file-path: '/assets/fonts';
