@@ -1,20 +1,61 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { GridLayout } from 'grid-layout-plus'
+import TitleWidget from '@/components/TitleWidget.vue'
+import GridInfoWidget from '@/components/GridInfoWidget.vue'
+import MediaWidget from '@/components/MediaWidget.vue'
 
 const ROW_HEIGHT = 10
 
-const draggable = ref(true)
-const resizable = ref(false)
-const responsive = ref(false)
+const gridOptions = reactive({
+  draggable: false,
+  resizable: false,
+  responsive: false
+})
 
 const layout = reactive([
   {
-    x: 5,
+    x: 2,
     y: 0,
+    w: 2,
+    h: 8,
+    i: '0',
+    static: false,
+    data: {
+      type: 'title',
+      title: 'The Grid'
+    }
+  },
+  {
+    x: 2,
+    y: 8,
+    w: 3,
+    h: 9,
+    i: '6',
+    static: false,
+    data: {
+      type: 'media',
+      title: 'pic',
+      url: 'https://www.udiscovermusic.com/wp-content/uploads/2021/09/Red-Hot-Chili-Peppers-GettyImages-535925590-2.jpg'
+    }
+  },
+  {
+    x: 4,
+    y: 0,
+    w: 6,
+    h: 8,
+    i: '1',
+    static: false,
+    data: {
+      type: 'grid-info'
+    }
+  },
+  {
+    x: 5,
+    y: 8,
     w: 5,
     h: 20,
-    i: '0',
+    i: '2',
     static: false,
     data: {
       type: 'iframe',
@@ -30,10 +71,10 @@ const layout = reactive([
   },
   {
     x: 5,
-    y: 20,
+    y: 35,
     w: 5,
     h: 31,
-    i: '1',
+    i: '3',
     static: false,
     data: {
       type: 'iframe',
@@ -47,10 +88,10 @@ const layout = reactive([
   },
   {
     x: 2,
-    y: 0,
+    y: 20,
     w: 3,
     h: 22,
-    i: '2',
+    i: '4',
     static: false,
     data: {
       type: 'iframe',
@@ -63,10 +104,10 @@ const layout = reactive([
   },
   {
     x: 2,
-    y: 22,
+    y: 39,
     w: 3,
     h: 29,
-    i: '3',
+    i: '5',
     static: false,
     data: {
       type: 'iframe',
@@ -76,8 +117,29 @@ const layout = reactive([
       title: 'Twitter post',
       frameborder: '0'
     }
+  },
+  {
+    x: 5,
+    y: 26,
+    w: 5,
+    h: 9,
+    i: '7',
+    static: false,
+    data: {
+      type: 'media',
+      url: 'https://iconic.collectionzz.com/cdn/shop/collections/RHCP-COLLECTION-1920X500.png?v=1704679934&width=2048'
+    }
   }
 ])
+
+// function that checks if padding is needed
+function needsPadding(type: string): boolean {
+  if (type === 'title' || type === 'grid-info' || type === 'media') {
+    return false
+  }
+
+  return true
+}
 </script>
 
 <style scoped>
@@ -102,56 +164,37 @@ const layout = reactive([
 
 <template>
   <main>
-    <lukso-card variant="with-header" border-radius="small" shadow="medium">
-      <div slot="header" class="p-2 text-center">
-        <h1 className="text-xl font-bold underline">The Grid</h1>
-      </div>
-      <div slot="content" class="p-2">
-        <p>
-          Help me make this less shitty @
-          <a
-            class="underline text-blue-500"
-            :href="'https://github.com/nastita/vue-cool-grid-stuff'"
-            >vue-cool-grid-stuff</a
-          >
-        </p>
-        <div class="p-2 border-black border-solid">
-          Displayed as <code>[x, y, w, h]</code>:
-          <div class="columns-8">
-            <div v-for="item in layout" :key="item.i">
-              <strong>{{ item.i }}</strong
-              >: [{{ item.x }}, {{ item.y }}, {{ item.w }}, {{ item.h }}]
-            </div>
-          </div>
-        </div>
-        <div class="mt-2">
-          <input v-model="draggable" type="checkbox" /> Draggable
-          <input v-model="resizable" type="checkbox" /> Resizable
-          <input v-model="responsive" type="checkbox" /> Responsive
-        </div>
-      </div>
-    </lukso-card>
-
     <div class="mt-2">
       <GridLayout
         v-model:layout="layout"
         :row-height="ROW_HEIGHT"
-        :is-draggable="draggable"
-        :is-resizable="resizable"
-        :responsive="responsive"
+        :is-draggable="gridOptions.draggable"
+        :is-resizable="gridOptions.resizable"
+        :responsive="gridOptions.responsive"
       >
         <template #item="{ item }">
-          <div slot="content" class="flex h-full p-4 rounded-xl shadow-xl bg-white">
+          <div
+            :class="
+              'flex flex-col h-full rounded-xl shadow-xl bg-white' +
+              (needsPadding(item.data.type) ? ' p-4' : '')
+            "
+          >
+            <TitleWidget v-if="item.data.type === 'title'" :title="item.data.title" />
+            <GridInfoWidget
+              v-if="item.data.type === 'grid-info'"
+              v-model="gridOptions"
+              :layout="layout"
+            />
+            <MediaWidget v-if="item.data.type === 'media'" :url="item.data.url" />
             <iframe
-              class="rounded-xl overflow-hidden"
               v-if="item.data.type === 'iframe'"
+              class="rounded-xl overflow-hidden"
               :src="item.data.src"
               :width="item.data.width"
               :height="item.data.height"
               :title="item.data.title"
               :frameborder="item.data.frameborder"
               :allow="item.data.allow"
-              :referrerpolicy="item.data.referrerpolicy"
             ></iframe>
           </div>
         </template>
