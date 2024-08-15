@@ -1,0 +1,16 @@
+<script setup lang="ts">
+import { useScriptTag } from '@vueuse/core'
+import { defineProps } from 'vue'
+
+defineProps<{
+  src: string
+}>()
+
+useScriptTag('https://platform.twitter.com/widgets.js')
+</script>
+
+<template>
+  <div class="rounded-lg overflow-scroll">
+    <a class="twitter-timeline" :href="src">Loading</a>
+  </div>
+</template>

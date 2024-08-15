@@ -1,141 +1,29 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import { GridLayout } from 'grid-layout-plus'
 import TitleWidget from '@/components/TitleWidget.vue'
 import GridInfoWidget from '@/components/GridInfoWidget.vue'
-import MediaWidget from '@/components/MediaWidget.vue'
+import ImageWidget from '@/components/ImageWidget.vue'
+import XTimelineWidget from '@/components/XTimelineWidget.vue'
+import XPostWidget from '@/components/XPostWidget.vue'
+import InstagramPostWidget from '@/components/InstagramPostWidget.vue'
+import { WidgetType } from '../types'
+import { THE_GRID_LAYOUT } from '../layout'
 
-const COL_NUM = 8
-const ROW_HEIGHT = 10
+const COL_NUM = 4
+const ROW_HEIGHT = 20
 
 const gridOptions = reactive({
-  draggable: false,
+  draggable: true,
   resizable: false,
   responsive: false
 })
 
-const layout = reactive([
-  {
-    x: 0,
-    y: 0,
-    w: 2,
-    h: 8,
-    i: '0',
-    static: false,
-    data: {
-      type: 'title',
-      title: 'The Grid'
-    }
-  },
-  {
-    x: 0,
-    y: 8,
-    w: 3,
-    h: 9,
-    i: '6',
-    static: false,
-    data: {
-      type: 'media',
-      title: 'pic',
-      url: 'https://www.udiscovermusic.com/wp-content/uploads/2021/09/Red-Hot-Chili-Peppers-GettyImages-535925590-2.jpg'
-    }
-  },
-  {
-    x: 2,
-    y: 0,
-    w: 6,
-    h: 8,
-    i: '1',
-    static: false,
-    data: {
-      type: 'grid-info'
-    }
-  },
-  {
-    x: 3,
-    y: 8,
-    w: 5,
-    h: 20,
-    i: '2',
-    static: false,
-    data: {
-      type: 'iframe',
-      width: '100%',
-      height: '100%',
-      src: 'https://www.youtube.com/embed/E1FNkf3MLKY?si=2fWw28HI1xtv8_wA',
-      title: 'YouTube video player',
-      frameborder: '0',
-      allow:
-        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',
-      referrerpolicy: 'strict-origin-when-cross-origin'
-    }
-  },
-  {
-    x: 3,
-    y: 35,
-    w: 5,
-    h: 31,
-    i: '3',
-    static: false,
-    data: {
-      type: 'iframe',
-      width: '100%',
-      height: '100%',
-      src: 'https://open.spotify.com/embed/playlist/37i9dQZF1DZ06evO0nT692?utm_source=generator',
-      title: 'Spotify playlist',
-      frameborder: '0',
-      allow: 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
-    }
-  },
-  {
-    x: 0,
-    y: 20,
-    w: 3,
-    h: 22,
-    i: '4',
-    static: false,
-    data: {
-      type: 'iframe',
-      width: '100%',
-      height: '100%',
-      src: 'https://www.instagram.com/reel/C4DnYdFLS9x/embed',
-      title: 'Instagram post',
-      frameborder: '0'
-    }
-  },
-  {
-    x: 0,
-    y: 39,
-    w: 3,
-    h: 29,
-    i: '5',
-    static: false,
-    data: {
-      type: 'iframe',
-      width: '100%',
-      height: '100%',
-      src: 'https://twitframe.com/show?url=https://twitter.com/ChiliPeppers/status/1821250605752656005',
-      title: 'Twitter post',
-      frameborder: '0'
-    }
-  },
-  {
-    x: 3,
-    y: 26,
-    w: 5,
-    h: 9,
-    i: '7',
-    static: false,
-    data: {
-      type: 'media',
-      url: 'https://iconic.collectionzz.com/cdn/shop/collections/RHCP-COLLECTION-1920X500.png?v=1704679934&width=2048'
-    }
-  }
-])
+const layout = reactive(THE_GRID_LAYOUT)
 
 // function that checks if padding is needed
-function needsPadding(type: string): boolean {
-  if (type === 'title' || type === 'grid-info' || type === 'media') {
+function needsPadding(type: WidgetType): boolean {
+  if (type === WidgetType.TITLE || type === WidgetType.DEBUG) {
     return false
   }
 
@@ -165,7 +53,7 @@ function needsPadding(type: string): boolean {
 
 <template>
   <main>
-    <div class="mt-2 mx-auto lg:w-3/4 xl:w-2/3">
+    <div class="mt-2 mx-auto max-w-content">
       <GridLayout
         v-model:layout="layout"
         :col-num="COL_NUM"
@@ -178,26 +66,29 @@ function needsPadding(type: string): boolean {
           <div
             :class="
               'flex flex-col h-full rounded-xl shadow-xl bg-white' +
-              (needsPadding(item.data.type) ? ' p-4' : '')
+              (needsPadding(item.type) ? ' p-2' : '')
             "
           >
-            <TitleWidget v-if="item.data.type === 'title'" :title="item.data.title" />
+            <TitleWidget v-if="item.type === WidgetType.TITLE" :title="item.properties.title" />
             <GridInfoWidget
-              v-if="item.data.type === 'grid-info'"
+              v-if="item.type === WidgetType.DEBUG"
               v-model="gridOptions"
               :layout="layout"
             />
-            <MediaWidget v-if="item.data.type === 'media'" :url="item.data.url" />
+            <ImageWidget v-if="item.type === WidgetType.IMAGE" :src="item.properties.src" />
             <iframe
-              v-if="item.data.type === 'iframe'"
+              v-if="item.type === WidgetType.IFRAME"
+              :src="item.properties.src"
+              :title="item.properties.title"
+              :allow="item.properties.allow"
               class="rounded-xl overflow-hidden"
-              :src="item.data.src"
-              :width="item.data.width"
-              :height="item.data.height"
-              :title="item.data.title"
-              :frameborder="item.data.frameborder"
-              :allow="item.data.allow"
+              width="100%"
+              height="100%"
+              frameborder="0"
             ></iframe>
+            <XPostWidget v-if="item.type === 'X_POST'" />
+            <XTimelineWidget v-if="item.type === 'X_TIMELINE'" :src="item.properties.src" />
+            <InstagramPostWidget v-if="item.type === 'INSTAGRAM_POST'" :src="item.properties.src" />
           </div>
         </template>
       </GridLayout>

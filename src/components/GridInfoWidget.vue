@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
+import type { Widget } from '../types'
 
 const model = defineModel({
   required: true,
@@ -11,13 +12,7 @@ const model = defineModel({
 })
 
 defineProps<{
-  layout: {
-    x: number
-    y: number
-    w: number
-    h: number
-    i: string
-  }[]
+  layout: Widget[]
 }>()
 </script>
 
@@ -25,8 +20,8 @@ defineProps<{
   <div class="flex flex-col h-full p-4 bg-pink-95 rounded-xl overflow-hidden text-sm">
     Displayed as [x, y, w, h]:
     <div class="columns-4">
-      <div v-for="item in layout" :key="item.i">
-        <strong>{{ item.i }}</strong
+      <div v-for="(item, index) in layout" :key="index">
+        <strong>{{ index }}</strong
         >: [{{ item.x }}, {{ item.y }}, {{ item.w }}, {{ item.h }}]
       </div>
     </div>
