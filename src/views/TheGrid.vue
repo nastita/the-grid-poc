@@ -5,6 +5,7 @@ import TitleWidget from '@/components/TitleWidget.vue'
 import GridInfoWidget from '@/components/GridInfoWidget.vue'
 import MediaWidget from '@/components/MediaWidget.vue'
 
+const COL_NUM = 8
 const ROW_HEIGHT = 10
 
 const gridOptions = reactive({
@@ -15,7 +16,7 @@ const gridOptions = reactive({
 
 const layout = reactive([
   {
-    x: 2,
+    x: 0,
     y: 0,
     w: 2,
     h: 8,
@@ -27,7 +28,7 @@ const layout = reactive([
     }
   },
   {
-    x: 2,
+    x: 0,
     y: 8,
     w: 3,
     h: 9,
@@ -40,7 +41,7 @@ const layout = reactive([
     }
   },
   {
-    x: 4,
+    x: 2,
     y: 0,
     w: 6,
     h: 8,
@@ -51,7 +52,7 @@ const layout = reactive([
     }
   },
   {
-    x: 5,
+    x: 3,
     y: 8,
     w: 5,
     h: 20,
@@ -70,7 +71,7 @@ const layout = reactive([
     }
   },
   {
-    x: 5,
+    x: 3,
     y: 35,
     w: 5,
     h: 31,
@@ -87,7 +88,7 @@ const layout = reactive([
     }
   },
   {
-    x: 2,
+    x: 0,
     y: 20,
     w: 3,
     h: 22,
@@ -103,7 +104,7 @@ const layout = reactive([
     }
   },
   {
-    x: 2,
+    x: 0,
     y: 39,
     w: 3,
     h: 29,
@@ -119,7 +120,7 @@ const layout = reactive([
     }
   },
   {
-    x: 5,
+    x: 3,
     y: 26,
     w: 5,
     h: 9,
@@ -164,9 +165,10 @@ function needsPadding(type: string): boolean {
 
 <template>
   <main>
-    <div class="mt-2">
+    <div class="mt-2 mx-auto lg:w-3/4 xl:w-2/3">
       <GridLayout
         v-model:layout="layout"
+        :col-num="COL_NUM"
         :row-height="ROW_HEIGHT"
         :is-draggable="gridOptions.draggable"
         :is-resizable="gridOptions.resizable"
