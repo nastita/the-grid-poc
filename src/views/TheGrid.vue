@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onMounted, reactive } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { GridLayout, type Breakpoint, type Breakpoints, type Layout } from 'grid-layout-plus'
 import TitleWidget from '@/components/TitleWidget.vue'
-import GridInfoWidget from '@/components/GridInfoWidget.vue'
+import DebugWidget from '@/components/DebugWidget.vue'
 import ImageWidget from '@/components/ImageWidget.vue'
 import XTimelineWidget from '@/components/XTimelineWidget.vue'
 import XPostWidget from '@/components/XPostWidget.vue'
@@ -10,6 +10,9 @@ import InstagramPostWidget from '@/components/InstagramPostWidget.vue'
 import { WidgetType } from '../types'
 import { THE_GRID_LAYOUT } from '../layout'
 import TextWidget from '../components/TextWidget.vue'
+import { useLocalStorage } from '@vueuse/core'
+
+const storedCustomLayout = useLocalStorage('grid-layout', THE_GRID_LAYOUT)
 
 const COL_NUM_LARGE = 4
 const COL_NUM_SMALL = 2
@@ -18,7 +21,11 @@ const ROW_HEIGHT = 20
 const gridOptions = reactive({
   draggable: false,
   resizable: false,
-  responsive: true
+  responsive: true,
+  onCustomizeClick: () => {
+    showCustomizeModal.value = true
+    customLayout.value = JSON.stringify(layout.value, null, 2)
+  }
 })
 
 const cols: Breakpoints = {
@@ -29,7 +36,9 @@ const cols: Breakpoints = {
   lg: COL_NUM_LARGE
 }
 
-const layout = reactive(THE_GRID_LAYOUT)
+const layout = ref(storedCustomLayout.value)
+const showCustomizeModal = ref(false)
+const customLayout = ref('')
 
 // UGLY HACK => Need to deep dive into the grid-layout-plus source code
 // to figure out why the layouts overlap.
@@ -46,6 +55,49 @@ function needsPadding(type: WidgetType): boolean {
   }
 
   return true
+}
+
+function validateAndSaveLayout(newLayout: string): void {
+  let parsedLayout: any
+  try {
+    parsedLayout = JSON.parse(newLayout)
+  } catch (error) {
+    alert('Invalid JSON 👿')
+
+    return
+  }
+
+  if (
+    !Array.isArray(parsedLayout) ||
+    // check if object entries adhere to Widget interface
+    !parsedLayout.every((item) => {
+      return (
+        typeof item.x === 'number' &&
+        typeof item.y === 'number' &&
+        typeof item.w === 'number' &&
+        typeof item.h === 'number' &&
+        typeof item.type === 'string' &&
+        typeof item.properties === 'object'
+      )
+    })
+  ) {
+    alert('Invalid schema 😡')
+
+    return
+  }
+  layout.value = parsedLayout
+  storedCustomLayout.value = parsedLayout
+
+  // close modal
+  showCustomizeModal.value = false
+
+  // save to local storage
+  alert('Layout saved 🎉')
+}
+
+function resetLayout(): void {
+  layout.value = THE_GRID_LAYOUT
+  storedCustomLayout.value = THE_GRID_LAYOUT
 }
 
 onMounted(() => {
@@ -104,7 +156,7 @@ onMounted(() => {
               :text="item.properties.text"
               :bg-color="item.properties.bgColor"
             />
-            <GridInfoWidget
+            <DebugWidget
               v-if="item.type === WidgetType.DEBUG"
               v-model="gridOptions"
               :layout="layout"
@@ -126,6 +178,28 @@ onMounted(() => {
           </div>
         </template>
       </GridLayout>
+    </div>
+    <div>
+      <lukso-modal
+        :is-open="showCustomizeModal ? true : undefined"
+        size="medium"
+        @on-backdrop-click="showCustomizeModal = false"
+      >
+        <div class="flex flex-col m-4 align-middle justify-center">
+          <div>Edit in IDE. Ensure JSON is valid. Read the code to understand the structure.</div>
+          <div>Experiment. Go wild. YOLO. 😂👌</div>
+          <textarea
+            v-model="customLayout"
+            class="w-full h-96 border-solid border-2 border-black"
+          ></textarea>
+          <span class="space-x-1">
+            <lukso-button @click="validateAndSaveLayout(customLayout)" size="small">
+              Apply
+            </lukso-button>
+            <lukso-button @click="resetLayout()" size="small"> Reset </lukso-button>
+          </span>
+        </div>
+      </lukso-modal>
     </div>
   </main>
 </template>
