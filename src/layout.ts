@@ -9,7 +9,8 @@ export const THE_GRID_LAYOUT: Widget[] = [
     i: '1',
     type: WidgetType.TITLE,
     properties: {
-      title: 'The Grid'
+      title: 'The Grid',
+      bgColor: 'bg-purple-58',
     }
   },
   {
@@ -95,7 +96,6 @@ export const THE_GRID_LAYOUT: Widget[] = [
     i: '8',
     type: WidgetType.IMAGE,
     properties: {
-      type: 'media',
       src: 'https://iconic.collectionzz.com/cdn/shop/collections/RHCP-COLLECTION-1920X500.png?v=1704679934&width=2048'
     }
   },
@@ -108,6 +108,55 @@ export const THE_GRID_LAYOUT: Widget[] = [
     type: WidgetType.X_TIMELINE,
     properties: {
       src: 'https://twitter.com/ChiliPeppers'
+    }
+  },
+  {
+    x: 0,
+    y: 67,
+    w: WidgetSize.MEDIUM,
+    h: 16,
+    i: '10',
+    type: WidgetType.IFRAME,
+    properties: {
+      src: 'https://warpcast.com/vitalik.eth',
+      title: 'Vitalik.eth',
+      allow: 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
+    }
+  },
+  {
+    x: 2,
+    y: 67,
+    w: WidgetSize.MEDIUM,
+    h: 8,
+    i: '11',
+    type: WidgetType.TEXT,
+    properties: {
+      title: 'Nasta',
+      text: 'This is my dog Nastita. Best dog ever!',
+      bgColor: 'bg-sea-salt-67',
+    }
+  },
+  {
+    x: 2,
+    y: 75,
+    w: WidgetSize.SMALL,
+    h: 8,
+    i: '12',
+    type: WidgetType.IMAGE,
+    properties: {
+      src: 'https://avatars.githubusercontent.com/u/3680995?v=4'
+    }
+  },
+  {
+    x: 3,
+    y: 75,
+    w: WidgetSize.SMALL,
+    h: 8,
+    i: '13',
+    type: WidgetType.TITLE,
+    properties: {
+      title: 'By Ed with ♥️ ',
+      bgColor: 'bg-lukso-80',
     }
   }
 ];

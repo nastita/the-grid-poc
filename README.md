@@ -1,3 +1,15 @@
+# THE GRID POC
+
+## Ideas
+- [ ] Add markdown widget? This might result in 💩 looking widgets
+- [ ] Add Github showcase (can't be done with iframe)
+- [ ] Add text color class options to title and text widgets
+- [ ] Add possibility of adding hyperlink to title widget, or add a link widget.
+
+## To-dos
+- [ ] Fix responsiveness bug that makes items overlap. Could be done by using responsive layouts or fixing the bug in the lib. Remove the workaround.
+- [ ] Add DIY grid that saves on local storage.
+
 # vue-project
 
 This template should help get you started developing with Vue 3 in Vite.

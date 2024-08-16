@@ -15,6 +15,7 @@ export enum WidgetSize {
 
 export enum WidgetType {
   TITLE = 'TITLE',
+  TEXT = 'TEXT',
   X_POST = 'X_POST',
   X_TIMELINE = 'X_TIMELINE',
   INSTAGRAM_POST = 'INSTAGRAM_POST',
@@ -22,4 +23,3 @@ export enum WidgetType {
   IMAGE = 'IMAGE',
   DEBUG = 'DEBUG',
 }
-

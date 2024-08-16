@@ -9,6 +9,7 @@ import XPostWidget from '@/components/XPostWidget.vue'
 import InstagramPostWidget from '@/components/InstagramPostWidget.vue'
 import { WidgetType } from '../types'
 import { THE_GRID_LAYOUT } from '../layout'
+import TextWidget from '../components/TextWidget.vue'
 
 const COL_NUM_LARGE = 4
 const COL_NUM_SMALL = 2
@@ -83,11 +84,21 @@ function needsPadding(type: WidgetType): boolean {
         <template #item="{ item }">
           <div
             :class="
-              'flex flex-col h-full rounded-xl shadow-xl bg-white' +
+              'flex flex-col h-full rounded-xl shadow-2xl bg-white' +
               (needsPadding(item.type) ? ' p-2' : '')
             "
           >
-            <TitleWidget v-if="item.type === WidgetType.TITLE" :title="item.properties.title" />
+            <TitleWidget
+              v-if="item.type === WidgetType.TITLE"
+              :title="item.properties.title"
+              :bg-color="item.properties.bgColor"
+            />
+            <TextWidget
+              v-if="item.type === WidgetType.TEXT"
+              :title="item.properties.title"
+              :text="item.properties.text"
+              :bg-color="item.properties.bgColor"
+            />
             <GridInfoWidget
               v-if="item.type === WidgetType.DEBUG"
               v-model="gridOptions"

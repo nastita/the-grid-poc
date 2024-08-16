@@ -1,6 +1,7 @@
 <script setup lang="ts">
 defineProps<{
   title: string
+  text: string
   bgColor?: string
 }>()
 </script>
@@ -8,11 +9,12 @@ defineProps<{
 <template>
   <div
     :class="
-      'flex h-full items-center justify-center p-4 text-neutral-100 rounded-xl overflow-hidden ' +
+      'flex flex-col h-full items-center justify-center p-4 text-neutral-100 rounded-xl overflow-hidden ' +
       bgColor
     "
   >
     <!-- Text size needs to auto resize based on widget size -->
-    <h1 class="heading-apax-48-bold">{{ title }}</h1>
+    <h1 class="heading-apax-24-medium">{{ title }}</h1>
+    <p class="text-apax-16-regular">{{ text }}</p>
   </div>
 </template>

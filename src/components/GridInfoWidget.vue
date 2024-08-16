@@ -16,7 +16,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="flex flex-col h-full p-4 bg-pink-95 rounded-xl overflow-hidden text-sm">
+  <div class="flex flex-col h-full p-4 bg-pink-95 rounded-xl overflow-scroll text-sm">
     Displayed as [x, y, w, h]:
     <div class="columns-4">
       <div v-for="(item, index) in layout" :key="index">
@@ -25,6 +25,7 @@ defineProps<{
       </div>
     </div>
     <div class="mt-2">
+      Debug options:
       <input v-model="model.draggable" type="checkbox" /> Draggable
       <input v-model="model.resizable" type="checkbox" /> Resizable
       <input v-model="model.responsive" type="checkbox" /> Responsive
