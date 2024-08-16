@@ -96,6 +96,9 @@ function validateAndSaveLayout(newLayout: string): void {
 }
 
 function resetLayout(): void {
+  // close modal
+  showCustomizeModal.value = false
+
   layout.value = THE_GRID_LAYOUT
   storedCustomLayout.value = THE_GRID_LAYOUT
 }
