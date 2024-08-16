@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
-import { GridLayout } from 'grid-layout-plus'
+import { GridLayout, type Breakpoint, type Breakpoints, type Layout } from 'grid-layout-plus'
 import TitleWidget from '@/components/TitleWidget.vue'
 import GridInfoWidget from '@/components/GridInfoWidget.vue'
 import ImageWidget from '@/components/ImageWidget.vue'
@@ -10,16 +10,33 @@ import InstagramPostWidget from '@/components/InstagramPostWidget.vue'
 import { WidgetType } from '../types'
 import { THE_GRID_LAYOUT } from '../layout'
 
-const COL_NUM = 4
+const COL_NUM_LARGE = 4
+const COL_NUM_SMALL = 2
 const ROW_HEIGHT = 20
 
 const gridOptions = reactive({
-  draggable: true,
+  draggable: false,
   resizable: false,
-  responsive: false
+  responsive: true
 })
 
+const cols: Breakpoints = {
+  xxs: COL_NUM_SMALL,
+  xs: COL_NUM_LARGE,
+  sm: COL_NUM_LARGE,
+  md: COL_NUM_LARGE,
+  lg: COL_NUM_LARGE
+}
+
 const layout = reactive(THE_GRID_LAYOUT)
+
+// UGLY HACK => Need to deep dive into the grid-layout-plus source code
+// to figure out why the layouts overlap.
+// Or just calculate 2 col layouts manually based on the 4 col layout.
+function breakpointChanged(_newBreakpoint: Breakpoint, _newLayout: Layout): void {
+  gridOptions.draggable = !gridOptions.draggable
+  gridOptions.draggable = !gridOptions.draggable
+}
 
 // function that checks if padding is needed
 function needsPadding(type: WidgetType): boolean {
@@ -56,11 +73,12 @@ function needsPadding(type: WidgetType): boolean {
     <div class="mt-2 mx-auto max-w-content">
       <GridLayout
         v-model:layout="layout"
-        :col-num="COL_NUM"
+        :cols="cols"
         :row-height="ROW_HEIGHT"
         :is-draggable="gridOptions.draggable"
         :is-resizable="gridOptions.resizable"
         :responsive="gridOptions.responsive"
+        @breakpoint-changed="breakpointChanged"
       >
         <template #item="{ item }">
           <div
