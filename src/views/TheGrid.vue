@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { onMounted, reactive } from 'vue'
 import { GridLayout, type Breakpoint, type Breakpoints, type Layout } from 'grid-layout-plus'
 import TitleWidget from '@/components/TitleWidget.vue'
 import GridInfoWidget from '@/components/GridInfoWidget.vue'
@@ -47,6 +47,11 @@ function needsPadding(type: WidgetType): boolean {
 
   return true
 }
+
+onMounted(() => {
+  gridOptions.draggable = !gridOptions.draggable
+  gridOptions.draggable = !gridOptions.draggable
+})
 </script>
 
 <style scoped>
