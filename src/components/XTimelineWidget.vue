@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useScriptTag } from '@vueuse/core'
-import { defineProps } from 'vue'
 
 defineProps<{
   src: string
