@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { Widget } from '../types'
-
 const model = defineModel({
   required: true,
   default: {
@@ -11,32 +9,47 @@ const model = defineModel({
   }
 })
 
-defineProps<{
-  layout: Widget[]
-}>()
+function onDraggableChange() {
+  model.value.draggable = !model.value.draggable
+}
+
+function onResizableChange() {
+  model.value.resizable = !model.value.resizable
+}
+
+function onResponsiveChange() {
+  model.value.responsive = !model.value.responsive
+}
 </script>
-  
+
 <template>
-  <div class="flex flex-col h-full p-2 bg-pink-95 rounded-xl overflow-scroll text-xs">
-    Displayed as [x, y, w, h]:
-    <div class="mt-1 columns-4">
-      <div v-for="(item, index) in layout" :key="index">
-        <strong>{{ index }}</strong
-        >: [{{ item.x }}, {{ item.y }}, {{ item.w }}, {{ item.h }}]
-      </div>
-    </div>
-    <div class="mt-1">
-      Debug options:
-      <input v-model="model.draggable" type="checkbox" /> Draggable
-      <input v-model="model.resizable" type="checkbox" /> Resizable
-      <input v-model="model.responsive" type="checkbox" /> Responsive
-      <button :onclick="model.onCustomizeClick" class="text-blue-500">👉 Customize</button>
-    </div>
-    <p class="mt-1">
-      Help make The Grid great @
-      <a class="underline text-blue-500" :href="'https://github.com/nastita/vue-cool-grid-stuff'"
-        >vue-cool-grid-stuff</a
-      >
-    </p>
+  <div class="flex flex-col justify-center h-full p-2 bg-pink-95 rounded-xl space-y-2">
+    <lukso-checkbox
+      type="text"
+      size="x-small"
+      :checked="model.draggable.valueOf()"
+      @click="onDraggableChange()"
+    >
+      Draggable
+    </lukso-checkbox>
+    <lukso-checkbox
+      type="text"
+      size="x-small"
+      :checked="model.resizable.valueOf()"
+      @click="onResizableChange()"
+    >
+      Resizable
+    </lukso-checkbox>
+    <lukso-checkbox
+      type="text"
+      size="x-small"
+      :checked="model.responsive.valueOf()"
+      @click="onResponsiveChange()"
+    >
+      Responsive
+    </lukso-checkbox>
+    <lukso-button size="small" type="text" :onclick="model.onCustomizeClick" class="text-blue-500"
+      >👉 Customize
+    </lukso-button>
   </div>
 </template>

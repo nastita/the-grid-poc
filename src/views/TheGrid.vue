@@ -24,7 +24,7 @@ const gridOptions = reactive({
   responsive: true,
   onCustomizeClick: () => {
     showCustomizeModal.value = true
-    customLayout.value = JSON.stringify(layout.value, null, 2)
+    layoutStringified.value = JSON.stringify(layout.value, null, 2)
   }
 })
 
@@ -38,12 +38,12 @@ const cols: Breakpoints = {
 
 const layout = ref(storedCustomLayout.value)
 const showCustomizeModal = ref(false)
-const customLayout = ref('')
+const layoutStringified = ref('')
 
 // UGLY HACK => Need to deep dive into the grid-layout-plus source code
 // to figure out why the layouts overlap.
 // Or just calculate 2 col layouts manually based on the 4 col layout.
-function breakpointChanged(_newBreakpoint: Breakpoint, _newLayout: Layout): void {
+function triggerLayoutRefresh(): void {
   gridOptions.draggable = !gridOptions.draggable
   gridOptions.draggable = !gridOptions.draggable
 }
@@ -103,9 +103,12 @@ function resetLayout(): void {
   storedCustomLayout.value = THE_GRID_LAYOUT
 }
 
+function breakpointChanged(_newBreakpoint: Breakpoint, _newLayout: Layout): void {
+  triggerLayoutRefresh()
+}
+
 onMounted(() => {
-  gridOptions.draggable = !gridOptions.draggable
-  gridOptions.draggable = !gridOptions.draggable
+  triggerLayoutRefresh()
 })
 </script>
 
@@ -159,11 +162,7 @@ onMounted(() => {
               :text="item.properties.text"
               :bg-color="item.properties.bgColor"
             />
-            <DebugWidget
-              v-if="item.type === WidgetType.DEBUG"
-              v-model="gridOptions"
-              :layout="layout"
-            />
+            <DebugWidget v-if="item.type === WidgetType.DEBUG" v-model="gridOptions" />
             <ImageWidget v-if="item.type === WidgetType.IMAGE" :src="item.properties.src" />
             <iframe
               v-if="item.type === WidgetType.IFRAME"
@@ -185,22 +184,42 @@ onMounted(() => {
     <div>
       <lukso-modal
         :is-open="showCustomizeModal ? true : undefined"
-        size="medium"
+        size="full"
         @on-backdrop-click="showCustomizeModal = false"
       >
-        <div class="flex flex-col m-4 align-middle justify-center">
-          <div>Edit in IDE. Ensure JSON is valid. Read the code to understand the structure.</div>
-          <div>Experiment. Go wild. YOLO. 😂👌</div>
+        <div class="flex flex-col m-4 space-y-2 text-sm">
+          <div>
+            Current items info as i: [x, y, w, h]:
+            <div class="columns-4">
+              <div v-for="item in layout" :key="item.i">
+                <strong>{{ item.i }}</strong
+                >: [{{ item.x }}, {{ item.y }}, {{ item.w }}, {{ item.h }}]
+              </div>
+            </div>
+          </div>
+          <p>
+            Edit in IDE. Ensure JSON is valid. Read the code to understand the structure. Go wild.
+            YOLO SWAGGINS. 😂👌
+          </p>
           <textarea
-            v-model="customLayout"
+            v-model="layoutStringified"
             class="w-full h-96 border-solid border-2 border-black"
+            wrap="off"
           ></textarea>
-          <span class="space-x-1">
-            <lukso-button @click="validateAndSaveLayout(customLayout)" size="small">
+          <span class="space-x-2">
+            <lukso-button @click="validateAndSaveLayout(layoutStringified)" size="small">
               Apply
             </lukso-button>
             <lukso-button @click="resetLayout()" size="small"> Reset </lukso-button>
           </span>
+          <p>
+            Help make The Grid great @
+            <a
+              class="underline text-blue-500"
+              :href="'https://github.com/nastita/vue-cool-grid-stuff'"
+              >vue-cool-grid-stuff</a
+            >
+          </p>
         </div>
       </lukso-modal>
     </div>
