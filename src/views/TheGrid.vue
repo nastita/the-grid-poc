@@ -113,27 +113,17 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* .vgl-layout {
-  background-color: #eee;
-} */
-
-:deep(.vgl-item:not(.vgl-item--placeholder)) {
-  background-color: #ccc;
-  border-radius: 12px;
-  /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); */
-}
-
-:deep(.vgl-item--resizing) {
-  opacity: 90%;
-}
-
-:deep(.vgl-item--static) {
-  background-color: #cce;
+.grid-item {
+  background: rgba(red, green, blue, alpha);
+  border-radius: 10px;
+  border: 1px solid #e4e2e2a3;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 0 10px #0003;
 }
 </style>
 
 <template>
-  <main>
+  <main class="bg-hero bg-cover bg-fixed">
     <div class="mt-2 mx-auto max-w-content">
       <GridLayout
         v-model:layout="layout"
@@ -146,10 +136,7 @@ onMounted(() => {
       >
         <template #item="{ item }">
           <div
-            :class="
-              'flex flex-col h-full rounded-xl shadow-2xl bg-white' +
-              (needsPadding(item.type) ? ' p-2' : '')
-            "
+            :class="'flex flex-col h-full grid-item  ' + (needsPadding(item.type) ? ' p-2' : '')"
           >
             <TitleWidget
               v-if="item.type === WidgetType.TITLE"
@@ -169,7 +156,7 @@ onMounted(() => {
               :src="item.properties.src"
               :title="item.properties.title"
               :allow="item.properties.allow"
-              class="rounded-xl overflow-hidden"
+              class="rounded-[10px] overflow-hidden"
               width="100%"
               height="100%"
               frameborder="0"

@@ -6,6 +6,10 @@ export default {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      // Temporary bg
+      backgroundImage: {
+        hero: "url('/public/assets/images/background.jpg')"
+      },
       maxWidth: {
         content: '880px'
       },
