@@ -74,7 +74,7 @@ async function initializeTheGrid(userId: string | undefined): Promise<void> {
     return
   }
 
-  layout.value = getNewUserLayout(userId)
+  layout.value = gridConfigObject.config
 }
 
 // UGLY HACK => Need to deep dive into the grid-layout-plus source code
