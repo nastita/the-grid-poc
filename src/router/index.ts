@@ -9,6 +9,11 @@ const router = createRouter({
       name: 'home',
       component: TheGrid
     },
+    {
+      path: '/:username',
+      name: 'the-grid',
+      component: TheGrid
+    },
   ]
 })
 

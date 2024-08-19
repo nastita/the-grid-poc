@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { GridLayout, type Breakpoint, type Breakpoints, type Layout } from 'grid-layout-plus'
 import TitleWidget from '@/components/TitleWidget.vue'
 import DebugWidget from '@/components/DebugWidget.vue'
@@ -8,15 +9,21 @@ import XTimelineWidget from '@/components/XTimelineWidget.vue'
 import XPostWidget from '@/components/XPostWidget.vue'
 import InstagramPostWidget from '@/components/InstagramPostWidget.vue'
 import { WidgetType } from '../types'
-import { THE_GRID_LAYOUT } from '../layout'
+import { getNewUserLayout, isValidLayout, SHOWCASE_LAYOUT } from '../layout'
 import TextWidget from '../components/TextWidget.vue'
-import { useLocalStorage } from '@vueuse/core'
-
-const storedCustomLayout = useLocalStorage('grid-layout', THE_GRID_LAYOUT)
+import { getGridConfig, upsertGridConfig } from '../helpers/grid-config'
 
 const COL_NUM_LARGE = 4
 const COL_NUM_SMALL = 2
 const ROW_HEIGHT = 20
+
+const cols: Breakpoints = {
+  xxs: COL_NUM_SMALL,
+  xs: COL_NUM_LARGE,
+  sm: COL_NUM_LARGE,
+  md: COL_NUM_LARGE,
+  lg: COL_NUM_LARGE
+}
 
 const gridOptions = reactive({
   draggable: false,
@@ -28,17 +35,47 @@ const gridOptions = reactive({
   }
 })
 
-const cols: Breakpoints = {
-  xxs: COL_NUM_SMALL,
-  xs: COL_NUM_LARGE,
-  sm: COL_NUM_LARGE,
-  md: COL_NUM_LARGE,
-  lg: COL_NUM_LARGE
-}
-
-const layout = ref(storedCustomLayout.value)
+const layout = ref(SHOWCASE_LAYOUT)
 const showCustomizeModal = ref(false)
 const layoutStringified = ref('')
+
+// Load the layout based on the route id
+const route = useRoute()
+const username = Array.isArray(route.params.username)
+  ? route.params.username[0]
+  : route.params.username
+watch(
+  () => route.params.id,
+  () => {
+    initializeTheGrid(username)
+  },
+  { immediate: true }
+)
+
+async function initializeTheGrid(userId: string | undefined): Promise<void> {
+  if (!userId) {
+    layout.value = SHOWCASE_LAYOUT
+    return
+  }
+
+  // check if there's an existing layout for the user
+  const gridConfigObject = await getGridConfig(userId)
+  if (!gridConfigObject) {
+    layout.value = getNewUserLayout(userId)
+
+    return
+  }
+
+  // check if the config is valid
+  if (!isValidLayout(gridConfigObject.config)) {
+    alert('Saved layout is invalid. Resetting to default layout.')
+    layout.value = getNewUserLayout(userId)
+
+    return
+  }
+
+  layout.value = getNewUserLayout(userId)
+}
 
 // UGLY HACK => Need to deep dive into the grid-layout-plus source code
 // to figure out why the layouts overlap.
@@ -57,7 +94,7 @@ function needsPadding(type: WidgetType): boolean {
   return true
 }
 
-function validateAndSaveLayout(newLayout: string): void {
+async function validateAndSaveLayout(newLayout: string): Promise<void> {
   let parsedLayout: any
   try {
     parsedLayout = JSON.parse(newLayout)
@@ -67,31 +104,24 @@ function validateAndSaveLayout(newLayout: string): void {
     return
   }
 
-  if (
-    !Array.isArray(parsedLayout) ||
-    // check if object entries adhere to Widget interface
-    !parsedLayout.every((item) => {
-      return (
-        typeof item.x === 'number' &&
-        typeof item.y === 'number' &&
-        typeof item.w === 'number' &&
-        typeof item.h === 'number' &&
-        typeof item.type === 'string' &&
-        typeof item.properties === 'object'
-      )
-    })
-  ) {
+  if (!isValidLayout(parsedLayout)) {
     alert('Invalid schema 😡')
 
     return
   }
+
   layout.value = parsedLayout
-  storedCustomLayout.value = parsedLayout
 
   // close modal
   showCustomizeModal.value = false
 
-  // save to local storage
+  const response = await upsertGridConfig(username, layout.value)
+  if (!response) {
+    alert('Failed to save layout 😢')
+
+    return
+  }
+
   alert('Layout saved 🎉')
 }
 
@@ -99,8 +129,8 @@ function resetLayout(): void {
   // close modal
   showCustomizeModal.value = false
 
-  layout.value = THE_GRID_LAYOUT
-  storedCustomLayout.value = THE_GRID_LAYOUT
+  layout.value = SHOWCASE_LAYOUT
+  // storedCustomLayout.value = THE_GRID_LAYOUT
 }
 
 function breakpointChanged(_newBreakpoint: Breakpoint, _newLayout: Layout): void {
@@ -123,7 +153,7 @@ onMounted(() => {
 </style>
 
 <template>
-  <main class="bg-hero bg-cover bg-fixed">
+  <main class="h-screen bg-hero bg-cover bg-fixed">
     <div class="mt-2 mx-auto max-w-content">
       <GridLayout
         v-model:layout="layout"

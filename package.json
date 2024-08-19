@@ -14,8 +14,10 @@
   },
   "dependencies": {
     "@lukso/web-components": "^1.78.0",
+    "@types/parse": "^3.0.9",
     "@vueuse/core": "^10.11.1",
     "grid-layout-plus": "^1.0.5",
+    "parse": "^5.3.0",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3"
   },

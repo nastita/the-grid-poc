@@ -8,7 +8,7 @@ export default {
     extend: {
       // Temporary bg
       backgroundImage: {
-        hero: "url('/public/assets/images/background.jpg')"
+        hero: "url('/assets/images/background.jpg')"
       },
       maxWidth: {
         content: '880px'
