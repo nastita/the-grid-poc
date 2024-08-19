@@ -153,7 +153,7 @@ onMounted(() => {
 </style>
 
 <template>
-  <main class="h-screen bg-hero bg-cover bg-fixed">
+  <main class="min-h-screen bg-hero bg-cover bg-fixed">
     <div class="mt-2 mx-auto max-w-content">
       <GridLayout
         v-model:layout="layout"
