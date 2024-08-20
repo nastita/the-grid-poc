@@ -198,9 +198,15 @@ onMounted(() => {
               height="100%"
               frameborder="0"
             ></iframe>
-            <XPostWidget v-if="item.type === 'X_POST'" :src="item.properties.src" />
-            <XTimelineWidget v-if="item.type === 'X_TIMELINE'" :src="item.properties.src" />
-            <InstagramPostWidget v-if="item.type === 'INSTAGRAM_POST'" :src="item.properties.src" />
+            <XPostWidget v-if="item.type === WidgetType.X_POST" :src="item.properties.src" />
+            <XTimelineWidget
+              v-if="item.type === WidgetType.X_TIMELINE"
+              :src="item.properties.src"
+            />
+            <InstagramPostWidget
+              v-if="item.type === WidgetType.INSTAGRAM_POST"
+              :src="item.properties.src"
+            />
           </div>
         </template>
       </GridLayout>
@@ -222,8 +228,8 @@ onMounted(() => {
             </div>
           </div>
           <p>
-            Edit in IDE. Ensure JSON is valid. Read the code to understand the structure. Go wild.
-            YOLO SWAGGINS. 😂👌
+            Ensure JSON is valid. Read the code to understand the structure. Go wild. YOLO SWAGGINS.
+            😂👌
           </p>
           <textarea
             v-model="layoutStringified"

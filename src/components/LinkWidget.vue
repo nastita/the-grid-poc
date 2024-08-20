@@ -13,7 +13,7 @@ defineProps<{
       bgColor
     "
   >
-    <a :h-ref="src">
+    <a v-bind:href="src" target="_blank">
       <h1 class="heading-apax-48-bold">{{ title }}</h1>
     </a>
   </div>

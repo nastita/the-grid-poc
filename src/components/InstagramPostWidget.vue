@@ -5,7 +5,17 @@ defineProps<{
   src: string
 }>()
 
-useScriptTag('https://www.instagram.com/embed.js')
+useScriptTag(
+  'https://www.instagram.com/embed.js',
+  () => {
+    // @ts-ignore
+    window.instgrm.Embeds.process()
+  },
+  {
+    async: true,
+    defer: true
+  }
+)
 </script>
 
 <template>
