@@ -3,15 +3,17 @@ import { onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { GridLayout, type Breakpoint, type Breakpoints, type Layout } from 'grid-layout-plus'
 import TitleWidget from '@/components/TitleWidget.vue'
-import DebugWidget from '@/components/DebugWidget.vue'
+import DebugWidget, { type DebugWidgetModel } from '@/components/DebugWidget.vue'
 import ImageWidget from '@/components/ImageWidget.vue'
 import XTimelineWidget from '@/components/XTimelineWidget.vue'
 import XPostWidget from '@/components/XPostWidget.vue'
 import InstagramPostWidget from '@/components/InstagramPostWidget.vue'
-import { WidgetType } from '../types'
+import { WidgetType, type Property } from '../types'
 import { getNewUserLayout, isValidLayout, SHOWCASE_LAYOUT } from '../layout'
 import TextWidget from '../components/TextWidget.vue'
 import { getGridConfig, upsertGridConfig } from '../helpers/grid-config'
+import { WIDGET_TYPE_PROPERTIES } from '../types'
+import type { SelectStringOption } from '@lukso/web-components'
 
 const COL_NUM_LARGE = 4
 const COL_NUM_SMALL = 2
@@ -25,19 +27,49 @@ const cols: Breakpoints = {
   lg: COL_NUM_LARGE
 }
 
-const gridOptions = reactive({
+const gridOptions = reactive<DebugWidgetModel>({
   draggable: false,
   resizable: false,
   responsive: true,
   onCustomizeClick: () => {
     showCustomizeModal.value = true
     layoutStringified.value = JSON.stringify(layout.value, null, 2)
+  },
+  onAddWidgetClick: () => {
+    showNewWidgetModal.value = true
   }
 })
 
 const layout = ref(SHOWCASE_LAYOUT)
 const showCustomizeModal = ref(false)
+const showNewWidgetModal = ref(false)
 const layoutStringified = ref('')
+
+const widgetTypes: SelectStringOption[] = [
+  { id: '1', value: WidgetType.IFRAME },
+  { id: '2', value: WidgetType.IMAGE },
+  { id: '3', value: WidgetType.TITLE },
+  { id: '4', value: WidgetType.TEXT },
+  { id: '5', value: WidgetType.X_POST },
+  { id: '6', value: WidgetType.X_TIMELINE },
+  { id: '7', value: WidgetType.INSTAGRAM_POST }
+]
+const selectedWidgetType = ref<SelectStringOption>()
+const widgetTypeProperties = ref<Property[]>()
+const propertyValues = ref<Record<string, string>>({})
+
+function handleWidgetTypeChange(event: CustomEvent): void {
+  selectedWidgetType.value = event.detail.value as SelectStringOption
+  widgetTypeProperties.value = WIDGET_TYPE_PROPERTIES[selectedWidgetType.value.value as WidgetType]
+}
+
+function handleWidgetInputChange(event: CustomEvent): void {
+  propertyValues.value[
+    event.detail.name
+  ] = event.detail.value as string
+}
+
+function handleAddWidget(): void {}
 
 // Load the layout based on the route id
 const route = useRoute()
@@ -154,7 +186,7 @@ onMounted(() => {
 
 <template>
   <main class="min-h-screen bg-hero bg-cover bg-fixed">
-    <div class="mt-2 mx-auto max-w-content">
+    <div class="mx-auto max-w-content">
       <GridLayout
         v-model:layout="layout"
         :cols="cols"
@@ -199,6 +231,7 @@ onMounted(() => {
       </GridLayout>
     </div>
     <div>
+      // This should be a separate component
       <lukso-modal
         :is-open="showCustomizeModal ? true : undefined"
         size="full"
@@ -225,9 +258,11 @@ onMounted(() => {
           ></textarea>
           <span class="space-x-2">
             <lukso-button @click="validateAndSaveLayout(layoutStringified)" size="small">
-              Apply
+              Save
             </lukso-button>
-            <lukso-button @click="resetLayout()" size="small"> Reset </lukso-button>
+            <lukso-button @click="resetLayout()" size="small" class="bg-red-55">
+              Reset
+            </lukso-button>
           </span>
           <p>
             Help make The Grid great @
@@ -237,6 +272,41 @@ onMounted(() => {
               >vue-cool-grid-stuff</a
             >
           </p>
+        </div>
+      </lukso-modal>
+
+      // This should ALSO be a separate component
+      <lukso-modal
+        :is-open="showNewWidgetModal ? true : undefined"
+        size="medium"
+        @on-backdrop-click="showNewWidgetModal = false"
+      >
+        <div class="flex flex-col m-4 space-y-2 text-sm">
+          <lukso-select
+            size="small"
+            :value="JSON.stringify(selectedWidgetType)"
+            :options="JSON.stringify(widgetTypes)"
+            style="margin-top: px; float: left"
+            @on-select="handleWidgetTypeChange"
+          ></lukso-select>
+
+          <template
+            v-for="property in widgetTypeProperties"
+            v-bind:key="selectedWidgetType.value + property.key"
+          >
+            <lukso-input
+              value=""
+              name="input"
+              type="text"
+              placeholder=""
+              :label="property.key"
+              error=""
+              size="small"
+              @on-input="handleWidgetInputChange"
+            ></lukso-input>
+          </template>
+
+          <lukso-button @click="showNewWidgetModal = false" size="small"> Add Widget </lukso-button>
         </div>
       </lukso-modal>
     </div>

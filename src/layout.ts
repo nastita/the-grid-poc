@@ -93,13 +93,9 @@ export const SHOWCASE_LAYOUT: Widget[] = [
     "i": "7",
     "type": "X_POST",
     "properties": {
-      "width": "100%",
-      "height": "100%",
-      "src": "https://twitframe.com/show?url=https://twitter.com/ChiliPeppers/status/1821250605752656005",
+      "src": "https://twitter.com/ChiliPeppers/status/1821250605752656005",
       "title": "Twitter post",
-      "frameborder": "0"
     },
-    
   },
   {
     "x": 0,
@@ -123,7 +119,6 @@ export const SHOWCASE_LAYOUT: Widget[] = [
     "properties": {
       "src": "https://twitter.com/ChiliPeppers"
     },
-    
   },
   {
     "x": 0,

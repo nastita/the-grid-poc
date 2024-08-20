@@ -1,10 +1,19 @@
 <script setup lang="ts">
-const model = defineModel({
+export interface DebugWidgetModel {
+  draggable: boolean
+  resizable: boolean
+  responsive: boolean
+  onCustomizeClick: () => void
+  onAddWidgetClick: () => void
+}
+
+// TODO: there's a bug that causes the toggles to be out of sync with what is shown
+const model = defineModel<DebugWidgetModel>({
   required: true,
   default: {
     draggable: false,
     resizable: false,
-    responsive: false,
+    responsive: true,
     onCustomizeClick: () => {}
   }
 })
@@ -27,7 +36,7 @@ function onResponsiveChange() {
     <lukso-checkbox
       type="text"
       size="x-small"
-      :checked="model.draggable.valueOf()"
+      :checked="model.draggable"
       @click="onDraggableChange()"
     >
       Draggable
@@ -35,7 +44,7 @@ function onResponsiveChange() {
     <lukso-checkbox
       type="text"
       size="x-small"
-      :checked="model.resizable.valueOf()"
+      :checked="model.resizable"
       @click="onResizableChange()"
     >
       Resizable
@@ -43,13 +52,18 @@ function onResponsiveChange() {
     <lukso-checkbox
       type="text"
       size="x-small"
-      :checked="model.responsive.valueOf()"
+      :checked="model.responsive"
       @click="onResponsiveChange()"
     >
       Responsive
     </lukso-checkbox>
-    <lukso-button size="small" type="text" :onclick="model.onCustomizeClick" class="text-blue-500"
-      >👉 Customize
-    </lukso-button>
+    <div class="space-x-2">
+      <lukso-button variant="primary" size="small" type="text" :onclick="model.onCustomizeClick">
+        ⚙️ Customize
+      </lukso-button>
+      <lukso-button variant="primary" size="small" type="text" :onclick="model.onAddWidgetClick">
+        🆕 Widget
+      </lukso-button>
+    </div>
   </div>
 </template>
