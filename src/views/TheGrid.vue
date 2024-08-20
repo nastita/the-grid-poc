@@ -167,7 +167,9 @@ onMounted(() => {
       >
         <template #item="{ item }">
           <div
-            :class="'flex flex-col h-full grid-item  ' + (needsPadding(item.type) ? ' p-2' : '')"
+            :class="
+              'flex flex-col h-full grid-item  ' + (needsPadding(item.type) ? ' p-[10px]' : '')
+            "
           >
             <TitleWidget
               v-if="item.type === WidgetType.TITLE"
