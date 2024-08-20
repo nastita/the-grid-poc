@@ -191,7 +191,7 @@ onMounted(() => {
               height="100%"
               frameborder="0"
             ></iframe>
-            <XPostWidget v-if="item.type === 'X_POST'" />
+            <XPostWidget v-if="item.type === 'X_POST'" :src="item.properties.src" />
             <XTimelineWidget v-if="item.type === 'X_TIMELINE'" :src="item.properties.src" />
             <InstagramPostWidget v-if="item.type === 'INSTAGRAM_POST'" :src="item.properties.src" />
           </div>

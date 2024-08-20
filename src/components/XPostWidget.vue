@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { useScriptTag } from '@vueuse/core'
+defineProps<{
+  src: string
+}>()
 
 useScriptTag('https://platform.twitter.com/widgets.js')
 </script>
@@ -7,9 +10,7 @@ useScriptTag('https://platform.twitter.com/widgets.js')
 <template>
   <div class="rounded-lg overflow-scroll">
     <blockquote class="twitter-tweet">
-      <a href="https://twitter.com/ChiliPeppers/status/1821250605752656005?ref_src=twsrc%5Etfw"
-        >Loading</a
-      >
+      <a :href="src">Loading</a>
     </blockquote>
   </div>
 </template>
