@@ -12,6 +12,7 @@ import { WidgetType } from '../types'
 import { getNewUserLayout, isValidLayout, SHOWCASE_LAYOUT } from '../layout'
 import TextWidget from '../components/TextWidget.vue'
 import { getGridConfig, upsertGridConfig } from '../helpers/grid-config'
+import LinkWidget from '@/components/LinkWidget.vue'
 
 const COL_NUM_LARGE = 4
 const COL_NUM_SMALL = 2
@@ -177,6 +178,12 @@ onMounted(() => {
               v-if="item.type === WidgetType.TEXT"
               :title="item.properties.title"
               :text="item.properties.text"
+              :bg-color="item.properties.bgColor"
+            />
+            <LinkWidget
+              v-if="item.type === WidgetType.LINK"
+              :title="item.properties.title"
+              :src="item.properties.src"
               :bg-color="item.properties.bgColor"
             />
             <DebugWidget v-if="item.type === WidgetType.DEBUG" v-model="gridOptions" />
