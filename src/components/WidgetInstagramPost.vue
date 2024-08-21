@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useScriptTag } from '@vueuse/core'
+import { onMounted, onUpdated } from 'vue'
 
 defineProps<{
   src: string
@@ -9,17 +10,30 @@ useScriptTag(
   'https://www.instagram.com/embed.js',
   () => {
     // @ts-ignore
-    window.instgrm.Embeds.process()
+    setTimeout(() => processInstagramEmbeds(), 200)
   },
   {
     async: true,
     defer: true
   }
 )
+
+onMounted(() => {
+  setTimeout(() => processInstagramEmbeds(), 200)
+})
+
+onUpdated(() => {
+  setTimeout(() => processInstagramEmbeds(), 200)
+})
+
+function processInstagramEmbeds() {
+  // @ts-ignore
+  window.instgrm.Embeds.process()
+}
 </script>
 
 <template>
-  <div class="rounded-lg overflow-auto">
+  <div class="rounded-[10px] overflow-auto">
     <blockquote
       class="instagram-media"
       data-instgrm-captioned

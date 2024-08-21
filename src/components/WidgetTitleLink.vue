@@ -1,15 +1,19 @@
 <script setup lang="ts">
 defineProps<{
   title: string
-  src: string
+  src?: string
+  textColor?: string
   bgColor?: string
 }>()
+
 </script>
 
 <template>
   <div
     :class="
-      'flex h-full items-center justify-center p-4 text-neutral-100 rounded-xl overflow-hidden ' +
+      'flex h-full items-center justify-center p-4 text-neutral-100 rounded-[10px] overflow-hidden ' +
+      textColor +
+      ' ' +
       bgColor
     "
   >

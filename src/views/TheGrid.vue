@@ -2,17 +2,15 @@
 import { onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { GridLayout, type Breakpoint, type Breakpoints, type Layout } from 'grid-layout-plus'
-import TitleWidget from '@/components/TitleWidget.vue'
-import DebugWidget from '@/components/DebugWidget.vue'
-import ImageWidget from '@/components/ImageWidget.vue'
-import XTimelineWidget from '@/components/XTimelineWidget.vue'
-import XPostWidget from '@/components/XPostWidget.vue'
-import InstagramPostWidget from '@/components/InstagramPostWidget.vue'
-import { WidgetType } from '../types'
+import WidgetTitleLink from '@/components/WidgetTitleLink.vue'
+import WidgetImage from '@/components/WidgetImage.vue'
+import WidgetXTimeline from '@/components/WidgetXTimeline.vue'
+import WidgetXPost from '@/components/WidgetXPost.vue'
+import WidgetInstagramPost from '@/components/WidgetInstagramPost.vue'
+import WidgetText from '../components/WidgetText.vue'
+import { type GridProperties, WidgetType, type Widget } from '../types'
 import { getNewUserLayout, isValidLayout, SHOWCASE_LAYOUT } from '../layout'
-import TextWidget from '../components/TextWidget.vue'
 import { getGridConfig, upsertGridConfig } from '../helpers/grid-config'
-import LinkWidget from '@/components/LinkWidget.vue'
 
 const COL_NUM_LARGE = 4
 const COL_NUM_SMALL = 2
@@ -26,18 +24,13 @@ const cols: Breakpoints = {
   lg: COL_NUM_LARGE
 }
 
-const gridOptions = reactive({
-  draggable: false,
-  resizable: false,
-  responsive: true,
-  onCustomizeClick: () => {
-    showCustomizeModal.value = true
-    layoutStringified.value = JSON.stringify(layout.value, null, 2)
-  }
+const gridOptions = reactive<GridProperties>({
+  isDraggable: false,
+  isResizable: false,
+  isResponsive: true
 })
-
-const layout = ref(SHOWCASE_LAYOUT)
-const showCustomizeModal = ref(false)
+const layout = ref<Widget[]>([])
+const showSettingsModal = ref(false)
 const layoutStringified = ref('')
 
 // Load the layout based on the route id
@@ -82,17 +75,17 @@ async function initializeTheGrid(userId: string | undefined): Promise<void> {
 // to figure out why the layouts overlap.
 // Or just calculate 2 col layouts manually based on the 4 col layout.
 function triggerLayoutRefresh(): void {
-  gridOptions.draggable = !gridOptions.draggable
-  gridOptions.draggable = !gridOptions.draggable
+  gridOptions.isDraggable = !gridOptions.isDraggable
+  gridOptions.isDraggable = !gridOptions.isDraggable
 }
 
-// function that checks if padding is needed
-function needsPadding(type: WidgetType): boolean {
-  if (type === WidgetType.TITLE || type === WidgetType.DEBUG) {
-    return false
-  }
+function onSettingsClick() {
+  showSettingsModal.value = true
+  layoutStringified.value = JSON.stringify(layout.value, null, 2)
+}
 
-  return true
+function onModalClose() {
+  showSettingsModal.value = false
 }
 
 async function validateAndSaveLayout(newLayout: string): Promise<void> {
@@ -114,7 +107,7 @@ async function validateAndSaveLayout(newLayout: string): Promise<void> {
   layout.value = parsedLayout
 
   // close modal
-  showCustomizeModal.value = false
+  showSettingsModal.value = false
 
   const response = await upsertGridConfig(username, layout.value)
   if (!response) {
@@ -128,7 +121,7 @@ async function validateAndSaveLayout(newLayout: string): Promise<void> {
 
 function resetLayout(): void {
   // close modal
-  showCustomizeModal.value = false
+  showSettingsModal.value = false
 
   layout.value = SHOWCASE_LAYOUT
   // storedCustomLayout.value = THE_GRID_LAYOUT
@@ -155,41 +148,36 @@ onMounted(() => {
 
 <template>
   <main class="min-h-screen bg-hero bg-cover bg-fixed">
-    <div class="mt-2 mx-auto max-w-content">
+    <div class="fixed bottom-0 right-0 m-2">
+      <lukso-button size="small" type="button" variant="secondary" @click="onSettingsClick()"
+        >⚙️
+      </lukso-button>
+    </div>
+    <div class="mx-auto max-w-content">
       <GridLayout
         v-model:layout="layout"
         :cols="cols"
         :row-height="ROW_HEIGHT"
-        :is-draggable="gridOptions.draggable"
-        :is-resizable="gridOptions.resizable"
-        :responsive="gridOptions.responsive"
+        :is-draggable="gridOptions.isDraggable"
+        :is-resizable="gridOptions.isDraggable"
+        :responsive="gridOptions.isResponsive"
         @breakpoint-changed="breakpointChanged"
       >
         <template #item="{ item }">
-          <div
-            :class="
-              'flex flex-col h-full grid-item  ' + (needsPadding(item.type) ? ' p-[10px]' : '')
-            "
-          >
-            <TitleWidget
-              v-if="item.type === WidgetType.TITLE"
+          <div :class="'flex flex-col h-full grid-item  p-[10px]'">
+            <WidgetTitleLink
+              v-if="item.type === WidgetType.TITLE_LINK"
               :title="item.properties.title"
+              :src="item.properties.src"
               :bg-color="item.properties.bgColor"
             />
-            <TextWidget
+            <WidgetText
               v-if="item.type === WidgetType.TEXT"
               :title="item.properties.title"
               :text="item.properties.text"
               :bg-color="item.properties.bgColor"
             />
-            <LinkWidget
-              v-if="item.type === WidgetType.LINK"
-              :title="item.properties.title"
-              :src="item.properties.src"
-              :bg-color="item.properties.bgColor"
-            />
-            <DebugWidget v-if="item.type === WidgetType.DEBUG" v-model="gridOptions" />
-            <ImageWidget v-if="item.type === WidgetType.IMAGE" :src="item.properties.src" />
+            <WidgetImage v-if="item.type === WidgetType.IMAGE" :src="item.properties.src" />
             <iframe
               v-if="item.type === WidgetType.IFRAME"
               :src="item.properties.src"
@@ -200,12 +188,12 @@ onMounted(() => {
               height="100%"
               frameborder="0"
             ></iframe>
-            <XPostWidget v-if="item.type === WidgetType.X_POST" :src="item.properties.src" />
-            <XTimelineWidget
+            <WidgetXPost v-if="item.type === WidgetType.X_POST" :src="item.properties.src" />
+            <WidgetXTimeline
               v-if="item.type === WidgetType.X_TIMELINE"
               :src="item.properties.src"
             />
-            <InstagramPostWidget
+            <WidgetInstagramPost
               v-if="item.type === WidgetType.INSTAGRAM_POST"
               :src="item.properties.src"
             />
@@ -215,11 +203,50 @@ onMounted(() => {
     </div>
     <div>
       <lukso-modal
-        :is-open="showCustomizeModal ? true : undefined"
+        :is-open="showSettingsModal.valueOf() ? true : undefined"
         size="full"
-        @on-backdrop-click="showCustomizeModal = false"
+        @on-backdrop-click="onModalClose"
       >
         <div class="flex flex-col m-4 space-y-2 text-sm">
+          <div class="flex space-x-2">
+            <lukso-checkbox
+              type="text"
+              size="x-small"
+              :checked="gridOptions.isDraggable ? true : undefined"
+              @click="
+                () => {
+                  gridOptions.isDraggable = !gridOptions.isDraggable
+                }
+              "
+            >
+              Draggable
+            </lukso-checkbox>
+            <lukso-checkbox
+              type="text"
+              size="x-small"
+              :checked="gridOptions.isResizable ? true : undefined"
+              @click="
+                () => {
+                  gridOptions.isResizable = !gridOptions.isResizable
+                }
+              "
+            >
+              Resizable
+            </lukso-checkbox>
+            <lukso-checkbox
+              type="text"
+              size="x-small"
+              :checked="gridOptions.isResponsive ? true : undefined"
+              @click="
+                () => {
+                  gridOptions.isResponsive = !gridOptions.isResponsive
+                }
+              "
+            >
+              Responsive
+            </lukso-checkbox>
+          </div>
+
           <div>
             Current items info as i: [x, y, w, h]:
             <div class="columns-4">

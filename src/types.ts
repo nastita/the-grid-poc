@@ -1,8 +1,14 @@
 import type { LayoutItem } from 'grid-layout-plus';
 
+export interface GridProperties {
+  isDraggable: boolean;
+  isResizable: boolean;
+  isResponsive: boolean;
+}
+
 export interface Widget extends LayoutItem {
   type: WidgetType;
-  properties?: Record<string, any>; //TODO: should be typed based on type
+  properties?: Record<string, any>;
 }
 
 // TODO: calculate w and h based on size
@@ -14,13 +20,17 @@ export enum WidgetSize {
 }
 
 export enum WidgetType {
-  TITLE = 'TITLE',
+  TITLE_LINK = 'TITLE_LINK',
   TEXT = 'TEXT',
-  LINK = 'LINK',
   X_POST = 'X_POST',
   X_TIMELINE = 'X_TIMELINE',
   INSTAGRAM_POST = 'INSTAGRAM_POST',
-  IFRAME = 'IFRAME',
   IMAGE = 'IMAGE',
-  DEBUG = 'DEBUG',
+  // This should not be exposed as a tool to the user
+  // But can be used internally to display any page that accepts iframe embeds
+  // Eg: Youtube, Google Maps, Spotify, etc
+  IFRAME = 'IFRAME',
+  // This widget holds the configuration controls for the layout
+  // It will be replaced by the correct way of configuring the layout in the future
+  CONFIG = 'CONFIG',
 }
