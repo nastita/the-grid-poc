@@ -1,5 +1,8 @@
 # THE GRID POC
 
+Live site: https://the-grid-poc.netlify.app/
+try /irontom for a set up grid
+
 ## Ideas
 - [ ] Add markdown widget? This might result in 💩 looking widgets
 - [ ] Add Github showcase (can't be done with iframe)
