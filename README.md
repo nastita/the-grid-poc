@@ -1,13 +1,17 @@
 # THE GRID POC
 
 Live site: https://the-grid-poc.netlify.app/
+
 Demo grids:
 * https://the-grid-poc.netlify.app/irontom
 * https://the-grid-poc.netlify.app/feindura
 
 Hey 👋🏻, if you found this, congratulations. This is the original POC for Universal Everithing / LUKSO's The Grid 🍱.
 The Grid is now a live product with a thriving community and even mini web3 dapps.
-Check it out at https://universaleverything.io. This is my UP/Grid setup https://universaleverything.io/0x4cd8059df77372102104b36c418e7d76a5539a21.
+
+Check it out at https://universaleverything.io. 
+
+This is my UP/Grid setup https://universaleverything.io/0x4cd8059df77372102104b36c418e7d76a5539a21.
 
 ## Ideas
 - [ ] Add markdown widget? This might result in 💩 looking widgets
